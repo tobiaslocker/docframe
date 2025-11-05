@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>$if(title)$$title$$else$Document$endif$</title>
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.1/css/all.css">
+</head>
+
+<body>
+<div class="container">
+
+  <header>
+    $if(title)$
+      <h1>$title$</h1>
+    $endif$
+    $if(subtitle)$
+      <div class="subtitle">$subtitle$</div>
+    $endif$
+    <div id="webaddress">
+      $if(email)$
+        <a href="mailto:$email$"><i class="far fa-envelope"></i> $email$</a>
+      $endif$
+      $if(github)$
+        <a href="https://github.com/$github$"><i class="fab fa-github"></i> $github$</a>
+      $endif$
+    </div>
+  </header>
+
+  <main>
+    $body$
+  </main>
+</div>
+</body>
+
+</html>
