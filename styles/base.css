@@ -18,6 +18,13 @@ body {
     max-width: 800px;
     margin: 0 auto;
 }
+.subtitle {
+    font-size: 1em;
+    font-style: italic;
+    color: var(--text);
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+}
 h1, h2, h3, h4 {
     font-weight: 400;
     margin-top: 1em;
