@@ -1,0 +1,91 @@
+# ==============================================================
+# Reusable Workflow for Pandoc-based Markdown Projects
+# --------------------------------------------------------------
+# This workflow is NOT meant to run automatically inside the
+# `docframe` repository itself. It is designed to be called from
+# other repositories (e.g. CVs, essays, documentation) using:
+#
+#   uses: tobiaslocker/docframe/build-workflow.yml@main
+#
+# This repo acts as a shared framework containing:
+#   - Base HTML and LaTeX templates
+#   - Shared CSS and Pandoc configuration
+#   - A reusable GitHub Actions build pipeline
+#
+# IMPORTANT:
+# - Do NOT place this file under `.github/workflows/`
+#   to avoid triggering runs inside `docframe`.
+# - Keep it in the repository root (or another neutral folder)
+#   so it can still be referenced via `uses:`.
+# ==============================================================
+
+name: Build Markdown Project
+
+on:
+  workflow_call:
+    inputs:
+      md_file:
+        required: true
+        type: string
+      metadata_file:
+        required: true
+        type: string
+      html_template:
+        required: false
+        type: string
+        default: docframe/template.html
+      tex_template:
+        required: false
+        type: string
+        default: docframe/template.tex
+      output_name:
+        required: false
+        type: string
+        default: output
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install Pandoc + LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-xetex texlive-fonts-extra
+
+      - name: Build HTML
+        run: |
+          mkdir -p build/html
+          pandoc ${{ inputs.md_file }} \
+            --template=${{ inputs.html_template }} \
+            --metadata-file=${{ inputs.metadata_file }} \
+            -o build/html/index.html
+
+      - name: Build PDF
+        run: |
+          mkdir -p build/pdf
+          pandoc ${{ inputs.md_file }} \
+            --template=${{ inputs.tex_template }} \
+            --metadata-file=${{ inputs.metadata_file }} \
+            --pdf-engine=xelatex \
+            -o build/pdf/${{ inputs.output_name }}.pdf
+
+      - name: Copy styles
+        run: cp -r docframe/styles build/html/
+
+      - name: Deploy HTML to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/html
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-output
+          path: build/pdf/${{ inputs.output_name }}.pdf
