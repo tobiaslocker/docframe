@@ -23,8 +23,6 @@ name: Build Markdown Project
 
 on:
   workflow_call:
-  push:
-    if: github.repository != 'tobiaslocker/docframe'
     inputs:
       md_file:
         required: true
@@ -44,6 +42,9 @@ on:
         required: false
         type: string
         default: output
+
+  push:
+    if: github.repository != 'tobiaslocker/docframe'
 
 jobs:
   build:
