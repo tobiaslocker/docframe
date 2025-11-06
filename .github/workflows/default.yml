@@ -23,6 +23,8 @@ name: Build Markdown Project
 
 on:
   workflow_call:
+  push:
+    if: github.repository != 'tobiaslocker/docframe'
     inputs:
       md_file:
         required: true
