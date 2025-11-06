@@ -33,11 +33,11 @@ on:
       html_template:
         required: false
         type: string
-        default: docframe/template.html
+        default: docframe/templates/default.html
       tex_template:
         required: false
         type: string
-        default: docframe/template.tex
+        default: docframe/templates/default.tex
       output_name:
         required: false
         type: string
