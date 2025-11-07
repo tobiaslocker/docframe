@@ -41,17 +41,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: pandoc/latex:latest
+
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           submodules: true
-
-      - name: Install Pandoc + LaTeX
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pandoc texlive-xetex texlive-fonts-extra
 
       - name: Build HTML
         run: |
@@ -83,9 +81,9 @@ jobs:
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
-        name: pdf
-        path: build/pdf
-        retention-days: 3
+          name: pdf
+          path: build/pdf
+          retention-days: 3
 
       - name: Deploy HTML to GitHub Pages
         if: github.event_name == 'release'
