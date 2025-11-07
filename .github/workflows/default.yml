@@ -1,22 +1,11 @@
-# ==============================================================
+# # ==============================================================
 # Reusable Workflow for Pandoc-based Markdown Projects
 # --------------------------------------------------------------
 # This workflow is NOT meant to run automatically inside the
 # `docframe` repository itself. It is designed to be called from
-# other repositories (e.g. CVs, essays, documentation) using:
+# other repositories using:
 #
 #   uses: tobiaslocker/docframe/build-workflow.yml@main
-#
-# This repo acts as a shared framework containing:
-#   - Base HTML and LaTeX templates
-#   - Shared CSS and Pandoc configuration
-#   - A reusable GitHub Actions build pipeline
-#
-# IMPORTANT:
-# - Do NOT place this file under `.github/workflows/`
-#   to avoid triggering runs inside `docframe`.
-# - Keep it in the repository root (or another neutral folder)
-#   so it can still be referenced via `uses:`.
 # ==============================================================
 
 name: Build Markdown Project
@@ -46,6 +35,9 @@ on:
   push:
     if: github.repository != 'tobiaslocker/docframe'
 
+  release:
+    types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -69,6 +61,9 @@ jobs:
             --metadata-file=${{ inputs.metadata_file }} \
             -o build/html/index.html
 
+      - name: Copy styles
+        run: cp -r docframe/styles build/html/
+
       - name: Build PDF
         run: |
           mkdir -p build/pdf
@@ -78,16 +73,22 @@ jobs:
             --pdf-engine=xelatex \
             -o build/pdf/${{ inputs.output_name }}.pdf
 
-      - name: Copy styles
-        run: cp -r docframe/styles build/html/
+      - name: Upload HTML (with styles)
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-output
+          path: build/html/
+          retention-days: 3
 
       - name: Deploy HTML to GitHub Pages
+        if: github.event_name == 'release'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/html
 
       - name: Upload PDF
+        if: github.event_name == 'release'
         uses: actions/upload-artifact@v4
         with:
           name: pdf-output
