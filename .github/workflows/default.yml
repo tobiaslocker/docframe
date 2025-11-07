@@ -73,12 +73,19 @@ jobs:
             --pdf-engine=xelatex \
             -o build/pdf/${{ inputs.output_name }}.pdf
 
-      - name: Upload HTML (with styles)
+      - name: Upload HTML artifact
         uses: actions/upload-artifact@v4
         with:
-          name: html-output
-          path: build/html/
+          name: html
+          path: build/html
           retention-days: 3
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+        name: pdf
+        path: build/pdf
+        retention-days: 3
 
       - name: Deploy HTML to GitHub Pages
         if: github.event_name == 'release'
@@ -87,9 +94,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/html
 
-      - name: Upload PDF
+      - name: Upload PDF to Release
         if: github.event_name == 'release'
-        uses: actions/upload-artifact@v4
+        uses: softprops/action-gh-release@v2
         with:
-          name: pdf-output
-          path: build/pdf/${{ inputs.output_name }}.pdf
+          files: build/pdf/${{ inputs.output_name }}.pdf
+
