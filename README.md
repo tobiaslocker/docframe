@@ -43,6 +43,18 @@ jobs:
       metadata_file: src/metadata.yaml
 ```
 
+### Artifact Behavior
+
+| Event                   | Artifact Type | Retention | Deployment                        |   
+|-------------------------|---------------|-----------|-----------------------------------|
+| **push**                | Temporary     | 3 days    | _Not deployed_                    |
+| **release (published)** | Persistent    | Permanent | HTML deployed to **GitHub Pages** |
+
+In short:  
+- Regular pushes are great for previewing or testing document builds.  
+- Publishing a release will generate and upload permanent artifacts and automatically deploy your HTML output to GitHub Pages.
+
+
 ## Local Build
 
 You can also build locally without GitHub Actions:
