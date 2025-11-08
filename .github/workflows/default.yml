@@ -32,12 +32,6 @@ on:
         type: string
         default: output
 
-  push:
-    if: github.repository != 'tobiaslocker/docframe'
-
-  release:
-    types: [published]
-
 jobs:
   build:
     runs-on: ubuntu-latest
